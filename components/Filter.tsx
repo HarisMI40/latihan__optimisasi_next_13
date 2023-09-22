@@ -1,14 +1,39 @@
 'use client'
 
+import { formUrlQuery } from '@/sanity/utils';
 import {useState} from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 const Filter = () => {
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
-    const links = ['all', 'web', 'mobile', 'design', 'data science'];
+    const links = ['all', 'mobile', 'Backend', 'Frontend', 'Fullstack'];
     const [active,setActive] = useState<String>('');
 
     const handleFilter = (link: String) => {
-        setActive(link);
+        let newUrl = '';
+        console.log("this search : " +searchParams.toString());
+        if(active === link){
+         
+            setActive('');
+            newUrl = formUrlQuery({
+              params : searchParams.toString(),
+              keysToRemove : ['category']
+            });
+
+            // return;
+        }else{
+          setActive(link);
+          
+          newUrl = formUrlQuery({
+            params : searchParams.toString(),
+            key : 'category',
+            value : link.toLocaleLowerCase()
+          })
+        }
+        console.log(newUrl);
+        router.push(newUrl, {scroll : false})
     }
 
   return (
